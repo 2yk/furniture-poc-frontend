@@ -1,6 +1,8 @@
 import { gql, useLazyQuery } from "@apollo/client";
 import { ConnectWithShopify } from "../../components";
 import { useQueryParams } from "../../hooks";
+import { GetProductsResponse } from "../../types";
+import { ProductList } from "./product-list.component";
 
 const GET_PRODUCTS = gql`
   query GetProducts($shop: String!, $accessToken: String!) {
@@ -11,17 +13,11 @@ const GET_PRODUCTS = gql`
   }
 `;
 
-type response = {
-  getProducts: {
-    id: string;
-    title: string;
-  }[];
-}
 
 const ProductsPage = () => {
   const { params } = useQueryParams();
 
-  const [fetchProducts, { loading, data }] = useLazyQuery<response>(GET_PRODUCTS)
+  const [fetchProducts, { loading, data }] = useLazyQuery<GetProductsResponse>(GET_PRODUCTS)
 
   const { shop, accessToken } = params;
 
@@ -32,12 +28,10 @@ const ProductsPage = () => {
       {shop && accessToken ? (
         <>
           <button onClick={() => fetchProducts({ variables: { shop, accessToken } })}>Fetch Products</button>
+
           {loading && <p>Loading...</p>}
-          {(data?.getProducts || []).map((p) => (
-            <div key={p.id}>
-              <h2>{p.title}</h2>
-            </div>
-          ))}
+
+          <ProductList products={data?.getProducts || []} />
         </>
       ) : (
         <ConnectWithShopify />
