@@ -31,7 +31,7 @@ const ProductsPage = () => {
 
           {loading && <p>Loading...</p>}
 
-          <ProductList products={data?.getProducts || []} />
+          <ProductList shop={shop as string} accessToken={accessToken as string} products={data?.getProducts || []} />
         </>
       ) : (
         <ConnectWithShopify />
