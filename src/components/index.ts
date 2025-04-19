@@ -1,0 +1,1 @@
+export * from './connect-with-shopify.component'
