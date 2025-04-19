@@ -25,8 +25,6 @@ const ProductsPage = () => {
 
   const { shop, accessToken } = params;
 
-  console.log(params)
-
   return (
     <div>
       <h1>Products</h1>
