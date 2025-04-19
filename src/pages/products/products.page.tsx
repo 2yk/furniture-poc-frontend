@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 import { ConnectWithShopify } from "../../components";
 
 const GET_PRODUCTS = gql`
@@ -6,25 +6,30 @@ const GET_PRODUCTS = gql`
     getProducts {
       id
       title
-      price
     }
   }
 `;
 
-const ProductsPage = () => {
-  const { loading, data } = useQuery(GET_PRODUCTS)
+type response = {
+  getProducts: {
+    id: string;
+    title: string;
+  }[];
+}
 
-  if (loading) return <p>Loading...</p>;
+const ProductsPage = () => {
+  const [fetchProducts, { loading, data }] = useLazyQuery<response>(GET_PRODUCTS)
 
   return (
     <div>
       <ConnectWithShopify />
       <h1>Products</h1>
-      <p>List of products will be displayed here.</p>
-      {data.getProducts.map((p) => (
+      <button onClick={() => fetchProducts()}>Fetch Products</button>
+
+      {loading && <p>Loading...</p>}
+      {(data?.getProducts || []).map((p) => (
         <div key={p.id}>
           <h2>{p.title}</h2>
-          <p>Price: ${p.price}</p>
         </div>
       ))}
     </div>
